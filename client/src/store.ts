@@ -11,6 +11,7 @@ interface UserStore {
 //create the store
 const userStore = create<UserStore>(set => ({
   users: [],
+
   fetchUsers: async () => {
     const users = await getAllUsers();
     set({ users });

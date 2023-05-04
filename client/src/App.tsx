@@ -8,7 +8,7 @@ const App = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers, users]);
+  }, [fetchUsers, users.length]);
 
   return (
     <Container>
