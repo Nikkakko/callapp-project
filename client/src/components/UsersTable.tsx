@@ -6,6 +6,7 @@ import { deleteUser } from '../api/fetchApi';
 import { useState } from 'react';
 import SelectedPersonModal from './SelectedPersonModal';
 import AddUserModal from './AddUserModal';
+import { useNavigate } from 'react-router-dom';
 
 const UsersTable = () => {
   const { users, fetchUsers } = userStore(state => state);
@@ -13,6 +14,8 @@ const UsersTable = () => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isAddUserModalVisible, setIsAddUserModalVisible] =
     useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   const handleDelete = async (record: Person) => {
     await deleteUser(record.id);
@@ -81,16 +84,22 @@ const UsersTable = () => {
         columns={columns}
         rowKey={(record: Person) => record.id}
         loading={users.length === 0}
-        footer={() => (
-          <Button
-            onClick={() => {
-              setIsAddUserModalVisible(true);
-            }}
-            type='primary'
-          >
-            Add User
-          </Button>
-        )}
+        footer={() => {
+          return (
+            <Space style={{}}>
+              <Button
+                onClick={() => {
+                  setIsAddUserModalVisible(true);
+                }}
+                type='primary'
+              >
+                Add User
+              </Button>
+
+              <Button onClick={() => navigate('/userschart')}>Charts</Button>
+            </Space>
+          );
+        }}
         onRow={record => ({
           onDoubleClick: () => handleRowClick(record),
         })}
