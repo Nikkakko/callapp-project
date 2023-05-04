@@ -1,64 +1,37 @@
-import { Modal, Input, Radio, Button, Form, Typography } from 'antd';
-import { Person } from '../PersonType';
-import { updateUser } from '../api/fetchApi';
-import userStore from '../store';
-import { useEffect } from 'react';
+import { FC } from 'react';
+import { Modal, Input, Radio, Button, Form } from 'antd';
 
-interface Props {
-  person: Person | undefined;
-  visible: boolean;
+import { createUser } from '../api/fetchApi';
+import userStore from '../store';
+
+interface AddUserModalProps {
+  isOpen: boolean;
   onClose: () => void;
 }
-const SelectedPersonModal: React.FC<Props> = ({ person, visible, onClose }) => {
+
+const AddUserModal: FC<AddUserModalProps> = ({ isOpen, onClose }) => {
   const { fetchUsers } = userStore(state => state);
+
   const [form] = Form.useForm();
-  const handleSubmit = async () => {
+
+  const handleAddUser = async () => {
     //get values from form
     const values = form.getFieldsValue();
-    //update user
-    await updateUser(person?.id as number, values);
+    //create user
+    await createUser(values);
     //fetch users
     fetchUsers();
     //close modal
     onClose();
   };
-
-  useEffect(() => {
-    // set form values
-
-    if (person) {
-      form.setFieldsValue({
-        name: person?.name,
-        email: person?.email,
-        phone: person?.phone,
-        address: {
-          city: person?.address.city,
-          street: person?.address.street,
-        },
-        gender: person?.gender,
-      });
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [person]);
-
   return (
-    <Modal open={visible} onCancel={onClose} footer={null} title='Edit user'>
-      {person && (
-        <Typography.Title
-          level={5}
-          style={{ textAlign: 'center', marginBottom: '20px' }}
-        >
-          {person.name}
-        </Typography.Title>
-      )}
-
+    <Modal open={isOpen} onCancel={onClose} footer={null} title='Add user'>
       <Form
         name='basic'
         form={form}
         layout='horizontal'
         autoComplete='off'
-        onFinish={handleSubmit}
+        onFinish={handleAddUser}
         onFinishFailed={() => console.log('failed')}
       >
         <Form.Item
@@ -71,7 +44,16 @@ const SelectedPersonModal: React.FC<Props> = ({ person, visible, onClose }) => {
         <Form.Item
           label='Email'
           name='email'
-          rules={[{ required: true, message: 'Please input your email!' }]}
+          rules={[
+            {
+              required: true,
+              message: 'Please input your email!',
+            },
+            {
+              pattern: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+              message: 'Please enter a valid email address',
+            },
+          ]}
         >
           <Input placeholder='email' />
         </Form.Item>
@@ -109,6 +91,11 @@ const SelectedPersonModal: React.FC<Props> = ({ person, visible, onClose }) => {
               required: true,
               message: 'Please input your phone!',
             },
+
+            {
+              pattern: /^(\+)?([ 0-9]){10,14}$/,
+              message: 'Please enter a valid phone number',
+            },
           ]}
         >
           <Input placeholder='phone' />
@@ -120,7 +107,7 @@ const SelectedPersonModal: React.FC<Props> = ({ person, visible, onClose }) => {
           htmlFor='submit'
         >
           <Button type='primary' htmlType='submit'>
-            Save changes
+            Add user
           </Button>
         </Form.Item>
       </Form>
@@ -128,4 +115,4 @@ const SelectedPersonModal: React.FC<Props> = ({ person, visible, onClose }) => {
   );
 };
 
-export default SelectedPersonModal;
+export default AddUserModal;

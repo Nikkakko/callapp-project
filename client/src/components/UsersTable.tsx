@@ -1,22 +1,22 @@
-import { Table, Button } from 'antd';
+import { Table, Button, Space } from 'antd';
 import userStore from '../store';
 import styled from 'styled-components';
 import { Person } from '../PersonType';
 import { deleteUser } from '../api/fetchApi';
 import { useState } from 'react';
 import SelectedPersonModal from './SelectedPersonModal';
+import AddUserModal from './AddUserModal';
 
 const UsersTable = () => {
-  const { users } = userStore(state => state);
+  const { users, fetchUsers } = userStore(state => state);
   const [selectedRow, setSelectedRow] = useState<Person>();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [isAddUserModalVisible, setIsAddUserModalVisible] =
+    useState<boolean>(false);
 
-  const handleDelete = (record: Person) => {
-    deleteUser(record.id);
-  };
-
-  const handleOpenEditModal = (record: Person) => {
-    console.log(record);
+  const handleDelete = async (record: Person) => {
+    await deleteUser(record.id);
+    fetchUsers();
   };
 
   const handleRowClick = (record: Person) => {
@@ -64,12 +64,12 @@ const UsersTable = () => {
     {
       title: 'Action',
       key: 'action',
-      render: (text: string, record: Person) => (
-        <>
+      render: (record: Person) => (
+        <Space>
           <Button onClick={() => handleDelete(record)} danger type='primary'>
             Delete
           </Button>
-        </>
+        </Space>
       ),
     },
   ];
@@ -81,17 +81,34 @@ const UsersTable = () => {
         columns={columns}
         rowKey={(record: Person) => record.id}
         loading={users.length === 0}
-        footer={() => `Total users: ${users.length}`}
+        footer={() => (
+          <Button
+            onClick={() => {
+              setIsAddUserModalVisible(true);
+            }}
+            type='primary'
+          >
+            Add User
+          </Button>
+        )}
         onRow={record => ({
-          onClick: () => handleRowClick(record),
+          onDoubleClick: () => handleRowClick(record),
         })}
         tableLayout='fixed'
+        style={{
+          cursor: 'pointer',
+        }}
       />
 
       <SelectedPersonModal
         person={selectedRow}
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
+      />
+
+      <AddUserModal
+        isOpen={isAddUserModalVisible}
+        onClose={() => setIsAddUserModalVisible(false)}
       />
     </Container>
   );
@@ -100,10 +117,6 @@ const UsersTable = () => {
 const Container = styled.div`
   display: flex;
   padding: 20px;
-`;
-
-const StyledTable = styled(Table)`
-  width: 100%;
 `;
 
 export default UsersTable;

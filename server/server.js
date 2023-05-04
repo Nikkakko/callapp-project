@@ -51,16 +51,20 @@ app.get('/api/items/:id', async (req, res) => {
 
 app.post('/api/items', async (req, res) => {
   const data = await readFile();
-  const newItem = { id: uuid(), ...req.body };
-  // const newItem = { id: data.length + 1, ...req.body };
-  data.push(newItem);
+  const newItem = { id: data.length + 1, ...req.body };
+
+  //add new item to first position of array (unshift)
+  data.unshift(newItem);
   await writeFile(data);
   res.json(newItem);
 });
 
 app.put('/api/items/:id', async (req, res) => {
   const data = await readFile();
+  //find item by id not index
   const index = data.findIndex(item => item.id === parseInt(req.params.id));
+
+  //find item by id not index
 
   if (index !== -1) {
     const updatedItem = { ...data[index], ...req.body };
