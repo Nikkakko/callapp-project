@@ -1,13 +1,18 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
-// import { readFile } from 'fs/promises';
-// import { writeFile } from 'fs';
+import cors from 'cors';
+import { uuid } from 'uuidv4';
 
 dotenv.config();
 const port = process.env.PORT || 3000;
 
 const app = express();
+app.use(
+  cors({
+    origin: '*',
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -46,9 +51,8 @@ app.get('/api/items/:id', async (req, res) => {
 
 app.post('/api/items', async (req, res) => {
   const data = await readFile();
-
-  //   const newItem = { id: Date.now(), ...req.body };
-  const newItem = { id: data.length + 1, ...req.body };
+  const newItem = { id: uuid(), ...req.body };
+  // const newItem = { id: data.length + 1, ...req.body };
   data.push(newItem);
   await writeFile(data);
   res.json(newItem);
@@ -57,6 +61,7 @@ app.post('/api/items', async (req, res) => {
 app.put('/api/items/:id', async (req, res) => {
   const data = await readFile();
   const index = data.findIndex(item => item.id === parseInt(req.params.id));
+
   if (index !== -1) {
     const updatedItem = { ...data[index], ...req.body };
     data[index] = updatedItem;
