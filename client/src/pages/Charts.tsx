@@ -1,5 +1,5 @@
 import { Pie } from '@ant-design/plots';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import userStore from '../store';
 import { Person } from '../PersonType';
 import { useNavigate } from 'react-router-dom';
@@ -21,14 +21,17 @@ const Charts = () => {
 
   const { users, fetchUsers } = userStore(state => state);
 
-  const groupedData: Record<string, Person[]> = users.reduce((acc, person) => {
-    if (!acc[person.address.city]) {
-      acc[person.address.city] = [];
-    }
+  const groupedData: Record<string, Person[]> = users.reduce(
+    (acc: Record<string, Person[]>, person) => {
+      if (!acc[person.address.city]) {
+        acc[person.address.city] = [];
+      }
 
-    acc[person.address.city].push(person);
-    return acc;
-  }, {});
+      acc[person.address.city].push(person);
+      return acc;
+    },
+    {}
+  );
 
   const cityCounts: CityCount[] = Object.keys(groupedData).map(city => {
     return {
@@ -47,8 +50,6 @@ const Charts = () => {
       percentage: (cityCount.count / total) * 100,
     };
   });
-
-  console.log(percentages);
 
   useEffect(() => {
     fetchUsers();

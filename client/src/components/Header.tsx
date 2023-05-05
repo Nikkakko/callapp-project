@@ -1,11 +1,16 @@
 import styled from 'styled-components';
 import CallAppLogo from '../assets/callapp-logo.png';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <Container>
-      <Logo src={CallAppLogo} alt='CallApp Logo' />
-      <Title>CallApp Challenge Project</Title>
+      <Logo
+        src={CallAppLogo}
+        alt='CallApp Logo'
+        onClick={() => navigate('/')}
+      />
     </Container>
   );
 };
@@ -24,12 +29,7 @@ const Container = styled.div`
 const Logo = styled.img`
   width: 150px;
   height: 50px;
-`;
-
-const Title = styled.h1`
-  font-size: 20px;
-  font-weight: 500;
-  color: #000;
+  cursor: pointer;
 `;
 
 export default Header;

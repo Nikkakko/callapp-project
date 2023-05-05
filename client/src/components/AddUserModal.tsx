@@ -37,7 +37,13 @@ const AddUserModal: FC<AddUserModalProps> = ({ isOpen, onClose }) => {
         <Form.Item
           label='Name'
           name='name'
-          rules={[{ required: true, message: 'Please input your username!' }]}
+          rules={[
+            { required: true, message: 'Please input your username!' },
+            {
+              pattern: /^[a-zA-Z\s]*$/,
+              message: 'Please enter a valid name',
+            },
+          ]}
         >
           <Input placeholder='name' />
         </Form.Item>

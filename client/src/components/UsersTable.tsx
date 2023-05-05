@@ -27,6 +27,22 @@ const UsersTable = () => {
     setIsModalVisible(true);
   };
 
+  const FooterButtons = () => {
+    return (
+      <Space style={{}}>
+        <Button
+          onClick={() => {
+            setIsAddUserModalVisible(true);
+          }}
+          type='primary'
+        >
+          Add User
+        </Button>
+        <Button onClick={() => navigate('/userschart')}>Chart</Button>
+      </Space>
+    );
+  };
+
   const columns = [
     {
       title: 'Name',
@@ -43,22 +59,17 @@ const UsersTable = () => {
       dataIndex: 'gender',
       key: 'gender',
     },
-
     {
-      title: 'Address',
-      children: [
-        {
-          title: 'Street',
-          dataIndex: ['address', 'street'],
-          key: 'street',
-        },
-        {
-          title: 'City',
-          dataIndex: ['address', 'city'],
-          key: 'city',
-        },
-      ],
+      title: 'Street',
+      dataIndex: ['address', 'street'],
+      key: 'street',
     },
+    {
+      title: 'City',
+      dataIndex: ['address', 'city'],
+      key: 'city',
+    },
+
     {
       title: 'Phone',
       dataIndex: 'phone',
@@ -85,28 +96,12 @@ const UsersTable = () => {
         rowKey={(record: Person) => record.id}
         loading={users.length === 0}
         footer={() => {
-          return (
-            <Space style={{}}>
-              <Button
-                onClick={() => {
-                  setIsAddUserModalVisible(true);
-                }}
-                type='primary'
-              >
-                Add User
-              </Button>
-
-              <Button onClick={() => navigate('/userschart')}>Charts</Button>
-            </Space>
-          );
+          return <FooterButtons />;
         }}
         onRow={record => ({
           onDoubleClick: () => handleRowClick(record),
         })}
-        tableLayout='fixed'
-        style={{
-          cursor: 'pointer',
-        }}
+        style={{ width: '80%', margin: 'auto', cursor: 'pointer' }}
       />
 
       <SelectedPersonModal
