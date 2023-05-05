@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 app.use(
   cors({
-    origin: '*',
+    origin: 'https://nikako-callapp.netlify.app',
   })
 );
 app.use(express.json());
